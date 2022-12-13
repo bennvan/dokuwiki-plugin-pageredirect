@@ -6,5 +6,5 @@
  * @author :     David Lorentsen <zyberdog@quakenet.org>
  */
 
-$lang['redirect_to']     = "This page has been moved, the new location is %s.";
+$lang['redirect_to']     = "This page has been moved. The new location is %s.";
 $lang['redirected_from'] = "You were redirected here from %s.";

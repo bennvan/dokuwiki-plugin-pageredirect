@@ -82,7 +82,7 @@ class action_plugin_pageredirect extends DokuWiki_Action_Plugin {
         if(!$is_external) {
             $page = wl($page, array('redirect' => $redirect), true, '&');
 
-            if($this->getConf('show_note')) {
+            if($this->getConf('show_note') !== 'never') {
                 $this->flash_message($ID);
             }
 
@@ -101,7 +101,7 @@ class action_plugin_pageredirect extends DokuWiki_Action_Plugin {
             return true;
         }
 
-        if($this->getConf('show_note')) {
+        if($this->getConf('show_note') !== 'never') {
             $this->render_flash();
         }
 
@@ -173,12 +173,31 @@ class action_plugin_pageredirect extends DokuWiki_Action_Plugin {
         unset($_SESSION[DOKU_COOKIE]['redirect']);
 
         $page        = cleanID($ID);
+
+        // Chech if set to only show note with edit perms 
+        if ($this->getConf('show_note') === 'has_edit_perms') {
+            if (auth_quickaclcheck($page) < AUTH_EDIT) return;
+        } 
+
         $use_heading = useHeading('navigation') && p_get_first_heading($page);
         $title       = hsc($use_heading ? p_get_first_heading($page) : $page);
 
         $url  = wl($page, array('redirect' => 'no'), true, '&');
         $link = '<a href="' . $url . '" class="wikilink1" title="' . $page . '">' . $title . '</a>';
-        echo '<div class="noteredirect">' . sprintf($this->getLang('redirected_from'), $link) . '</div><br/>';
+        
+
+        switch ($this->getConf('note_class')) {
+            case 'bs3':
+                $icon = '<i class="iconify" data-icon="fa:info-circle"></i>&nbsp;';
+                $class = 'alert alert-info text-center';
+                break;
+            default:
+                $icon = '';
+                $class = 'noteredirect';
+        }
+
+        echo '<div class="' . $class . '">' . $icon . sprintf($this->getLang('redirected_from'), $link);
+        echo '</div><br/>';
     }
 
     private function get_metadata($ID) {

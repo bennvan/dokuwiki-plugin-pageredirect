@@ -149,8 +149,18 @@ class syntax_plugin_pageredirect extends DokuWiki_Syntax_Plugin {
             $link = '<a href="' . hsc($page) . '" class="urlextern">' . hsc($page) . '</a>';
         }
 
+        switch ($this->getConf('note_class')) {
+            case 'bs3':
+                $icon = '<i class="iconify" data-icon="fa:info-circle"></i>&nbsp;';
+                $class = 'alert alert-info text-center';
+                break;
+            default:
+                $icon = '';
+                $class = 'noteredirect';
+        }
+
         // prepare message here instead of in render
-        $message = '<div class="noteredirect">' . sprintf($this->getLang('redirect_to'), $link) . '</div>';
+        $message = '<div class="' . $class . '">' . $icon . sprintf($this->getLang('redirect_to'), $link) . '</div>';
 
         return $message;
     }
